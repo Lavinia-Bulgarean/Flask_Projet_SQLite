@@ -21,7 +21,7 @@ def get_db():
     return conn
 
 # Route d'accueil
-@app.route('/')
+@app.route('/bibliotheque')
 def index():
     return render_template('index.html')
 
