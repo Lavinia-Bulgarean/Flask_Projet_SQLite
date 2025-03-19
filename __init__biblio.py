@@ -14,7 +14,7 @@ def est_authentifie():
 
 @app.route('/bibliotheque')
 def index():
-    return render_template('index.html')
+    return render_template('hello.html')
 
 # Connexion à la base de données
 conn = sqlite3.connect('bibliotheque.db')
