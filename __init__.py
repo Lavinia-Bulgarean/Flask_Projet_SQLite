@@ -76,7 +76,7 @@ def enregistrer_client():
 
  @app.route('/bibliotheque/')
  def pagedaccueil():
-    return render_template('index.html')
+     return render_template('index.html')
 
     # Exécution de la requête SQL pour insérer un nouveau client
     cursor.execute('INSERT INTO clients (created, nom, prenom, adresse) VALUES (?, ?, ?, ?)', (1002938, nom, prenom, "ICI"))
