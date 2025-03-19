@@ -1,17 +1,16 @@
 import sqlite3
 
-# Nom du fichier de la base de données
-DB_NAME = "bibliotheque.db"
+connection = sqlite3.connect('bibliotheque.db')
 
-# Fonction pour initialiser la base de données
-def init_db():
-    connection = sqlite3.connect(DB_NAME)
-    cursor = connection.cursor()
+with open('schemaBiblio.sql') as f:
+    connection.executescript(f.read())
 
-    # Création des tables
-    cursor.executescript(schemaBiblio.sql)
+cur = connection.cursor(
 
-    # Ajout de données de test
+
+
+
+ 
     cursor.execute("INSERT INTO Utilisateurs (nom, prenom, email, mot_de_passe, role) VALUES ('Admin', 'Super', 'admin@biblio.com', 'admin123', 'admin')")
     cursor.execute("INSERT INTO Utilisateurs (nom, prenom, email, mot_de_passe, role) VALUES ('Doe', 'John', 'john.doe@gmail.com', 'password', 'utilisateur')")
 
@@ -31,8 +30,4 @@ def init_db():
 
     connection.commit()
     connection.close()
-    print("✅ Base de données initialisée avec succès !")
-
-# Exécuter la fonction d'initialisation
-if __name__ == "__main__":
-    init_db()
+    
