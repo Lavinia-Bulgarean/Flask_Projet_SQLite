@@ -26,8 +26,8 @@ def index():
     return render_template('index.html')
 
 # Route d'authentification
-@app.route('/authentification', methods=['GET', 'POST'])
-def authentification():
+@app.route('/connexion', methods=['GET', 'POST'])
+def connexion():
     if request.method == 'POST':
         email = request.form['email']
         mot_de_passe = request.form['mot_de_passe']
