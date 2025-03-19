@@ -4,19 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bibliothèque</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        nav a {
+            margin-right: 20px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bienvenue dans la Bibliothèque</h1>
-    {% if session.get('authentifie') %}
-        <p>Bienvenue, {{ session.get('role') }} !</p>
-        <a href="{{ url_for('logout') }}">Se déconnecter</a>
-        {% if session.get('role') == 'admin' %}
-            <a href="{{ url_for('ajouter_livre') }}">Ajouter un livre</a>
-            <a href="{{ url_for('gestion_utilisateurs') }}">Gérer les utilisateurs</a>
+    <header>
+        <h1>Bienvenue dans la Bibliothèque</h1>
+    </header>
+
+    <main>
+        {% if session.get('authentifie') %}
+            <p>Bienvenue, {{ session.get('role') }} !</p>
+
+            <nav>
+                <a href="{{ url_for('logout') }}">Se déconnecter</a>
+
+                {% if session.get('role') == 'admin' %}
+                    <a href="{{ url_for('ajouter_livre') }}">Ajouter un livre</a>
+                    <a href="{{ url_for('gestion_utilisateurs') }}">Gérer les utilisateurs</a>
+                {% endif %}
+
+                <a href="{{ url_for('lister_livres') }}">Voir les livres</a>
+            </nav>
+        {% else %}
+            <nav>
+                <a href="{{ url_for('authentification') }}">Se connecter</a>
+            </nav>
         {% endif %}
-        <a href="{{ url_for('lister_livres') }}">Voir les livres</a>
-    {% else %}
-        <a href="{{ url_for('authentification') }}">Se connecter</a>
-    {% endif %}
+    </main>
 </body>
 </html>
