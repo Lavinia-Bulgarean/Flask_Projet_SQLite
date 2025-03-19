@@ -75,14 +75,9 @@ def enregistrer_client():
     conn.close()
     return redirect('/consultation/')  # Rediriger vers la page d'accueil après l'enregistrement
 
-@app.route('/consultation_livres/')
-def ReadBDDlivres():
-    conn = sqlite3.connect('bibliotheque.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM livres;')
-    data = cursor.fetchall()
-    conn.close()
-    return render_template('read_data.html', data=data)
+@app.route('/bibliotheque')
+def accueil():
+    return render_template('index.html')
 
 
 
