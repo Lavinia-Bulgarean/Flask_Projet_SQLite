@@ -62,7 +62,7 @@ def init_db():
     cursor = connection.cursor()
 
     # Création des tables
-    cursor.executescript(SCHEMA_SQL)
+    cursor.executescript(schemaBiblio.sql)
 
     # Ajout de données de test
     cursor.execute("INSERT INTO Utilisateurs (nom, prenom, email, mot_de_passe, role) VALUES ('Admin', 'Super', 'admin@biblio.com', 'admin123', 'admin')")
