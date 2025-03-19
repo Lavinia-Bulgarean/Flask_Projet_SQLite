@@ -8,8 +8,8 @@ with open('schemaBiblio.sql') as f:
 cur = connection.cursor()
 
  
-cursor.execute("INSERT INTO Utilisateurs (nom, prenom, email, mot_de_passe, role) VALUES ('Admin', 'Super', 'admin@biblio.com', 'admin123', 'admin')")
-cursor.execute("INSERT INTO Utilisateurs (nom, prenom, email, mot_de_passe, role) VALUES ('Doe', 'John', 'john.doe@gmail.com', 'password', 'utilisateur')")
+cur.execute("INSERT INTO Utilisateurs (nom, prenom, email, mot_de_passe, role) VALUES ('Admin', 'Super', 'admin@biblio.com', 'admin123', 'admin')")
+cur.execute("INSERT INTO Utilisateurs (nom, prenom, email, mot_de_passe, role) VALUES ('Doe', 'John', 'john.doe@gmail.com', 'password', 'utilisateur')")
 
 cur.execute("INSERT INTO Genres (nom) VALUES ('Science-Fiction')")
 cur.execute("INSERT INTO Genres (nom) VALUES ('Roman')")
