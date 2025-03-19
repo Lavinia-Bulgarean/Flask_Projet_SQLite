@@ -77,7 +77,7 @@ def enregistrer_client():
 
 @app.route('/bibliotheque')
 def accueil():
-    return render_template('hello.html')
+    return render_template('accueil.html')
 
 
 
