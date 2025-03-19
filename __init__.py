@@ -71,6 +71,13 @@ def enregistrer_client():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
+    conn = sqlite3.connect('bibliotheque.db')
+    cursor = conn.cursor()
+
+ @app.route('/bibliotheque')
+ def index():
+    return render_template('index.html')
+
     # Exécution de la requête SQL pour insérer un nouveau client
     cursor.execute('INSERT INTO clients (created, nom, prenom, adresse) VALUES (?, ?, ?, ?)', (1002938, nom, prenom, "ICI"))
     conn.commit()
