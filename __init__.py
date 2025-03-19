@@ -66,21 +66,28 @@ def formulaire_client():
 def enregistrer_client():
     nom = request.form['nom']
     prenom = request.form['prenom']
-
     # Connexion à la base de données
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-
-
- @app.route('/bibliotheque/')
- def pagedaccueil():
-     return render_template('index.html')
-
     # Exécution de la requête SQL pour insérer un nouveau client
     cursor.execute('INSERT INTO clients (created, nom, prenom, adresse) VALUES (?, ?, ?, ?)', (1002938, nom, prenom, "ICI"))
     conn.commit()
     conn.close()
     return redirect('/consultation/')  # Rediriger vers la page d'accueil après l'enregistrement
-                                                                                                                                       
+
+@app.route('/consultation_livres/')
+def ReadBDDlivres():
+    conn = sqlite3.connect('bibliotheque.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM livres;')
+    data = cursor.fetchall()
+    conn.close()
+    return render_template('read_data.html', data=data)
+
+
+
+
+
+
 if __name__ == "__main__":
   app.run(debug=True)
