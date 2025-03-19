@@ -71,8 +71,6 @@ def enregistrer_client():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    conn = sqlite3.connect('bibliotheque.db')
-    cursor = conn.cursor()
 
  @app.route('/bibliotheque/')
  def pagedaccueil():
