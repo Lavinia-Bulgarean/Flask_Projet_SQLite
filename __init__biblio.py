@@ -8,8 +8,6 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # Remplacer par une clé secrète plus robuste pour la production
 
-DB_NAME = "bibliotheque.db"
-
 # Fonction de vérification de l'authentification de l'utilisateur
 def est_authentifie():
     return session.get('authentifie')
