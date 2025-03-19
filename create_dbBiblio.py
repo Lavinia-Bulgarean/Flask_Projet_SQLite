@@ -3,59 +3,6 @@ import sqlite3
 # Nom du fichier de la base de données
 DB_NAME = "bibliotheque.db"
 
-# Schéma SQL de la base de données
-SCHEMA_SQL = """
-CREATE TABLE IF NOT EXISTS Utilisateurs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nom VARCHAR(100) NOT NULL,
-    prenom VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    mot_de_passe VARCHAR(255) NOT NULL,
-    role VARCHAR(20) CHECK (role IN ('admin', 'utilisateur')) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS Genres (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nom VARCHAR(100) UNIQUE NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS Auteurs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nom VARCHAR(100) NOT NULL,
-    prenom VARCHAR(100) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS Livres (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    titre VARCHAR(255) NOT NULL,
-    id_auteur INTEGER NOT NULL,
-    id_genre INTEGER NOT NULL,
-    annee_publication INTEGER,
-    ISBN VARCHAR(20) UNIQUE NOT NULL,
-    FOREIGN KEY (id_auteur) REFERENCES Auteurs(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_genre) REFERENCES Genres(id) ON DELETE SET NULL
-);
-
-CREATE TABLE IF NOT EXISTS Stock (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    id_livre INTEGER NOT NULL,
-    quantite INTEGER NOT NULL CHECK (quantite >= 0),
-    FOREIGN KEY (id_livre) REFERENCES Livres(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS Emprunts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    id_utilisateur INTEGER NOT NULL,
-    id_livre INTEGER NOT NULL,
-    date_emprunt DATE NOT NULL DEFAULT CURRENT_DATE,
-    date_retour_prevu DATE NOT NULL,
-    date_retour_effectif DATE,
-    statut VARCHAR(20) CHECK (statut IN ('emprunté', 'retourné', 'en retard')) DEFAULT 'emprunté',
-    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_livre) REFERENCES Livres(id) ON DELETE CASCADE
-);
-"""
-
 # Fonction pour initialiser la base de données
 def init_db():
     connection = sqlite3.connect(DB_NAME)
