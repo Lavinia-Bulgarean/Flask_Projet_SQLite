@@ -74,8 +74,8 @@ def enregistrer_client():
     conn = sqlite3.connect('bibliotheque.db')
     cursor = conn.cursor()
 
- @app.route('/bibliotheque')
- def index():
+ @app.route('/bibliotheque/')
+ def pagedaccueil():
     return render_template('index.html')
 
     # Exécution de la requête SQL pour insérer un nouveau client
