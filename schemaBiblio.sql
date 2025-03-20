@@ -2,7 +2,6 @@ CREATE TABLE Utilisateurs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nom VARCHAR(100) NOT NULL,
     prenom VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
     mot_de_passe VARCHAR(255) NOT NULL,
     role VARCHAR(20) CHECK (role IN ('admin', 'utilisateur')) NOT NULL
 );
