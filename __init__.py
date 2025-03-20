@@ -75,10 +75,45 @@ def enregistrer_client():
     conn.close()
     return redirect('/consultation/')  # Rediriger vers la page d'accueil après l'enregistrement
 
+
+# Route d'accueil
 @app.route('/bibliotheque')
 def accueil():
     return render_template('accueil.html')
 
+
+# Route de connexion
+@app.route('/connexion', methods=['GET', 'POST'])
+def connexion():
+    if request.method == 'POST':
+        nom = request.form['nom']
+        mot_de_passe = request.form['mot_de_passe']
+        # Connexion à la base de données
+        def get_db():
+        conn = sqlite3.connect('bibliotheque.db')
+        conn.row_factory = sqlite3.Row  # Pour accéder aux colonnes par leur nom
+        return conn
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM Utilisateurs WHERE nom = ? AND mot_de_passe = ?", (nom, mot_de_passe))
+        utilisateur = cursor.fetchone()
+
+        if utilisateur:
+            session['authentifie'] = True
+            session['user_id'] = utilisateur['id']
+            session['role'] = utilisateur['role']
+            return redirect(url_for('index'))
+        else:
+            return render_template('authentification.html', error="Identifiants incorrects")
+    
+    return render_template('authentification.html')
+
+# Route pour la déconnexion
+@app.route('/logout')
+def logout():
+    session.clear()  # Efface la session
+    return redirect(url_for('index'))
 
 
 
