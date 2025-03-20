@@ -75,16 +75,19 @@ def enregistrer_client():
     conn.close()
     return redirect('/consultation/')  # Rediriger vers la page d'accueil après l'enregistrement
 
-
+# Connexion à la base de données
+def get_db_connection():
+    conn = sqlite3.connect('bibliotheque.db')
+    conn.row_factory = sqlite3.Row
+    return conn
 # Route d'accueil
 @app.route('/bibliotheque')
 def accueil():
     return render_template('accueil.html')
-
-# Route pour récupérer les livres depuis la base
+# Route pour lister les livres
 @app.route('/lister_livres')
 def lister_livres():
-    connection = sqlite3.connect('bibliotheque.db')
+    connection = get_db_connection()
     cursor = connection.cursor()
 
     # Récupérer les livres avec leurs auteurs et genres
@@ -102,7 +105,7 @@ def lister_livres():
     # Passer les livres récupérés au template
     return render_template('lister_livres.html', livres=livres)
 
-# Route pour afficher le formulaire d'ajout de livre
+# Route pour ajouter un livre
 @app.route('/ajouter_livre', methods=['GET', 'POST'])
 def ajouter_livre():
     if request.method == 'POST':
@@ -114,18 +117,38 @@ def ajouter_livre():
         isbn = request.form['isbn']
 
         # Connexion à la base de données
-        connection = sqlite3.connect('bibliotheque.db')
+        connection = get_db_connection()
         cursor = connection.cursor()
 
-        # Insérer le livre dans la base de données
-        cursor.execute("""
-            INSERT INTO Livres (titre, id_auteur, id_genre, annee_publication, ISBN)
-            VALUES (?, (SELECT id FROM Auteurs WHERE nom = ? AND prenom = ?),
-                    (SELECT id FROM Genres WHERE nom = ?), ?, ?)
-        """, (titre, auteur.split()[0], auteur.split()[1], genre, annee, isbn))
+        try:
+            # Vérifier si l'auteur existe déjà dans la base de données
+            cursor.execute("SELECT id FROM Auteurs WHERE nom = ? AND prenom = ?", (auteur.split()[0], auteur.split()[1]))
+            auteur_id = cursor.fetchone()
+            if not auteur_id:
+                return "Erreur : Auteur introuvable, vérifiez le nom et le prénom."
 
-        # Commit et fermer la connexion
-        connection.commit()
+            # Vérifier si le genre existe dans la base de données
+            cursor.execute("SELECT id FROM Genres WHERE nom = ?", (genre,))
+            genre_id = cursor.fetchone()
+            if not genre_id:
+                return "Erreur : Genre introuvable, vérifiez le nom du genre."
+
+            # Insérer le livre dans la base de données
+            cursor.execute("""
+                INSERT INTO Livres (titre, id_auteur, id_genre, annee_publication, ISBN)
+                VALUES (?, ?, ?, ?, ?)
+            """, (titre, auteur_id[0], genre_id[0], annee, isbn))
+
+            # Commit et fermer la connexion
+            connection.commit()
+
+        except Exception as e:
+            # Gestion des erreurs
+            connection.rollback()  # Annuler la transaction en cas d'erreur
+            connection.close()
+            return f"Erreur lors de l'ajout du livre : {e}"
+
+        # Fermer la connexion à la base de données
         connection.close()
 
         # Rediriger l'utilisateur vers la page des livres après l'ajout
@@ -133,6 +156,8 @@ def ajouter_livre():
 
     return render_template('ajouter_livre.html')
 
+if __name__ == "__main__":
+    app.run(debug=True)
 
 
 if __name__ == "__main__":
