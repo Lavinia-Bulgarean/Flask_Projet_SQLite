@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Emprunts</title>
+</head>
+<body>
+
+<h1>Mes Emprunts</h1>
+
+<table border="1">
+    <tr>
+        <th>Titre</th>
+        <th>Auteur</th>
+        <th>Date d'emprunt</th>
+        <th>Date retour prévu</th>
+        <th>Statut</th>
+        <th>Action</th>
+    </tr>
+    {% for emprunt in emprunts %}
+    <tr>
+        <td>{{ emprunt.titre }}</td>
+        <td>{{ emprunt.nom }} {{ emprunt.prenom }}</td>
+        <td>{{ emprunt.date_emprunt }}</td>
+        <td>{{ emprunt.date_retour_prevu }}</td>
+        <td>{{ emprunt.statut }}</td>
+        <td>
+            {% if emprunt.statut == 'emprunté' %}
+                <a href="{{ url_for('retourner_livre', id_livre=emprunt.id) }}">Retourner</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{{ url_for('accueil') }}">Retour à l'accueil</a>
+
+</body>
+</html>
