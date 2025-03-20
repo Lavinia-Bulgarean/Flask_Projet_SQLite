@@ -238,7 +238,91 @@ def emprunter_livre():
 
     return render_template('emprunter_livre.html', livres=livres_disponibles)
 
+@app.route('/livres_disponibles')
+def livres_disponibles():
+    connection = get_db_connection()
+    cursor = connection.cursor()
 
+    cursor.execute("""
+        SELECT Livres.id, Livres.titre, Auteurs.nom, Auteurs.prenom, Genres.nom AS genre
+        FROM Livres
+        JOIN Auteurs ON Livres.id_auteur = Auteurs.id
+        JOIN Genres ON Livres.id_genre = Genres.id
+        WHERE Livres.id NOT IN (
+            SELECT id_livre FROM Emprunts WHERE statut = 'emprunté'
+        )
+    """)
+    
+    livres = cursor.fetchall()
+    connection.close()
+    
+    return render_template('livres_disponibles.html', livres=livres)
+
+
+@app.route('/emprunter/<int:id_livre>')
+def emprunter_livre(id_livre):
+    if 'utilisateur_id' not in session:
+        return redirect(url_for('connexion'))
+
+    id_utilisateur = session['utilisateur_id']
+    date_retour_prevu = datetime.now() + timedelta(days=14)  # Retour prévu dans 14 jours
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute("""
+            INSERT INTO Emprunts (id_utilisateur, id_livre, date_retour_prevu, statut)
+            VALUES (?, ?, ?, 'emprunté')
+        """, (id_utilisateur, id_livre, date_retour_prevu.strftime('%Y-%m-%d')))
+        connection.commit()
+    except sqlite3.Error as e:
+        print("Erreur lors de l'emprunt :", e)
+    
+    connection.close()
+
+    return redirect(url_for('mes_emprunts'))
+
+@app.route('/mes_emprunts')
+def mes_emprunts():
+    if 'utilisateur_id' not in session:
+        return redirect(url_for('connexion'))
+
+    id_utilisateur = session['utilisateur_id']
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+        SELECT Livres.titre, Auteurs.nom, Auteurs.prenom, Emprunts.date_emprunt, Emprunts.date_retour_prevu, Emprunts.statut
+        FROM Emprunts
+        JOIN Livres ON Emprunts.id_livre = Livres.id
+        JOIN Auteurs ON Livres.id_auteur = Auteurs.id
+        WHERE Emprunts.id_utilisateur = ? AND Emprunts.statut = 'emprunté'
+    """, (id_utilisateur,))
+    
+    emprunts = cursor.fetchall()
+    connection.close()
+    
+    return render_template('mes_emprunts.html', emprunts=emprunts)
+
+@app.route('/retourner/<int:id_livre>')
+def retourner_livre(id_livre):
+    if 'utilisateur_id' not in session:
+        return redirect(url_for('connexion'))
+
+    id_utilisateur = session['utilisateur_id']
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+        UPDATE Emprunts
+        SET statut = 'retourné', date_retour_effectif = CURRENT_DATE
+        WHERE id_utilisateur = ? AND id_livre = ? AND statut = 'emprunté'
+    """, (id_utilisateur, id_livre))
+    connection.commit()
+    connection.close()
+
+    return redirect(url_for('mes_emprunts'))
         
 if __name__ == "__main__":
   app.run(debug=True)
