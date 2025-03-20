@@ -81,14 +81,27 @@ def enregistrer_client():
 def accueil():
     return render_template('accueil.html')
 
-@app.route('/Livres/')
+
+@app.route('/Livres')
 def Nos_Livres():
-    conn = sqlite3.connect('bibliotheque.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM Livres;')
-    data = cursor.fetchall()
-    conn.close()
-    return render_template('lister_livres.html', data=data)
+    connection = sqlite3.connect('bibliotheque.db')
+    cursor = connection.cursor()
+    
+    cursor.execute("""
+        SELECT Livres.id, Livres.titre, Auteurs.nom || ' ' || Auteurs.prenom AS auteur, Genres.nom AS genre, Livres.annee_publication, Livres.ISBN
+        FROM Livres
+        JOIN Auteurs ON Livres.id_auteur = Auteurs.id
+        JOIN Genres ON Livres.id_genre = Genres.id
+    """)
+    
+    livres = [
+        {"id": row[0], "titre": row[1], "auteur": row[2], "genre": row[3], "annee_publication": row[4], "ISBN": row[5]}
+        for row in cursor.fetchall()
+    ]
+    
+    connection.close()
+    
+    return render_template('lister_livres.html', livres=livres)
 
 
 
