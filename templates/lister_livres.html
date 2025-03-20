@@ -8,7 +8,6 @@
 <body>
     <h1>Liste des livres</h1>
     <table>
-        <thead>
             <tr>
                 <th>Titre</th>
                 <th>Auteur</th>
@@ -17,8 +16,6 @@
                 <th>ISBN</th>
                 <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
             {% for livre in livres %}
             <tr>
                 <td>{{ livre.titre }}</td>
@@ -28,8 +25,6 @@
                 <td>{{ livre.ISBN }}</td>
             </tr>
             {% endfor %}
-        </tbody>
     </table>
-    <br>
 </body>
 </html>
