@@ -83,12 +83,12 @@ def accueil():
 
 @app.route('/Livres/')
 def Nos_Livres():
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect('bibliotheque.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM clients;')
+    cursor.execute('SELECT * FROM Livres;')
     data = cursor.fetchall()
     conn.close()
-    return render_template('read_data.html', data=data)
+    return render_template('lister_livres.html', data=data)
 
 
 
