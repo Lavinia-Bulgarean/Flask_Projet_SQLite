@@ -7,50 +7,51 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
         }
         header {
             background-color: #4CAF50;
             color: white;
-            padding: 10px 0;
             text-align: center;
+            padding: 15px;
         }
         .container {
             width: 80%;
-            margin: auto;
+            margin: 20px auto;
+            background: white;
             padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
         th, td {
             padding: 12px;
-            border: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
             text-align: left;
         }
         th {
             background-color: #4CAF50;
             color: white;
         }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+        tr:hover {
+            background-color: #f1f1f1;
         }
-        a {
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
             text-decoration: none;
-            color: white;
             background-color: #4CAF50;
-            padding: 8px 12px;
+            color: white;
+            padding: 10px 15px;
             border-radius: 5px;
         }
-        a:hover {
+        .back-link:hover {
             background-color: #45a049;
         }
     </style>
@@ -63,31 +64,25 @@
 
     <div class="container">
         <table>
-            <thead>
-                <tr>
-                    <th>Titre</th>
-                    <th>Auteur</th>
-                    <th>Genre</th>
-                    <th>Année de publication</th>
-                    <th>ISBN</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for livre in livres %}
-                <tr>
-                    <td>{{ livre.titre }}</td>
-                    <td>{{ livre.auteur }}</td>
-                    <td>{{ livre.genre }}</td>
-                    <td>{{ livre.annee_publication }}</td>
-                    <td>{{ livre.ISBN }}</td>
-                    <td>
-                        <a href="{{ url_for('voir_livre', id=livre.id) }}">Voir</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
+            <tr>
+                <th>Titre</th>
+                <th>Auteur</th>
+                <th>Genre</th>
+                <th>Année</th>
+                <th>ISBN</th>
+            </tr>
+            {% for livre in livres %}
+            <tr>
+                <td>{{ livre.titre }}</td>
+                <td>{{ livre.auteur }}</td>
+                <td>{{ livre.genre }}</td>
+                <td>{{ livre.annee_publication or 'Inconnue' }}</td>
+                <td>{{ livre.ISBN }}</td>
+            </tr>
+            {% endfor %}
         </table>
+
+        <a href="/" class="back-link">Retour à l'accueil</a>
     </div>
 
 </body>
