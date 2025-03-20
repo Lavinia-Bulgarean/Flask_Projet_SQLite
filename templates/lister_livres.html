@@ -1,30 +1,28 @@
-<!DOCTYPE html>
+<!DOCTYPE>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des livres</title>
+    <title>Clients</title>
 </head>
 <body>
-    <h1>Liste des livres</h1>
+    <h1>Liste des Livres</h1>
     <table>
-            <tr>
-                <th>Titre</th>
-                <th>Auteur</th>
-                <th>Genre</th>
-                <th>Année</th>
-                <th>ISBN</th>
-                <th>Actions</th>
-            </tr>
-            {% for row in data %}
-            <tr>
-                <td>{{ row[0] }}</td>
-                <td>{{ row[1] }}</td>
-                <td>{{ row[2] }}</td>
-                <td>{{ row[3] }}</td>
-                <td>{{ row[4] }}</td>
-            </tr>
-            {% endfor %}
+        <tr>
+            <th>Titre</th>
+            <th>Auteur</th>
+            <th>Genre</th>
+            <th>Année</th>
+            <th>ISBN</th>
+        </tr>
+        {% for row in data %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+            <td>{{ row[4] }}</td>
+        </tr>
+        {% endfor %}
     </table>
 </body>
 </html>
