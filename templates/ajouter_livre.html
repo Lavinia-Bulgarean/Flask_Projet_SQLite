@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Livre</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 50%;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, select {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Ajouter un Livre</h2>
+        <form action="{{ url_for('ajouter_livre') }}" method="POST">
+            <label for="titre">Titre :</label>
+            <input type="text" id="titre" name="titre" required>
+
+            <label for="auteur">Auteur :</label>
+            <select id="auteur" name="auteur" required>
+                {% for auteur in auteurs %}
+                    <option value="{{ auteur.id }}">{{ auteur.nom }} {{ auteur.prenom }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="genre">Genre :</label>
+            <select id="genre" name="genre" required>
+                {% for genre in genres %}
+                    <option value="{{ genre.id }}">{{ genre.nom }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="annee">Année de publication :</label>
+            <input type="number" id="annee" name="annee" required>
+
+            <label for="isbn">ISBN :</label>
+            <input type="text" id="isbn" name="isbn" required>
+
+            <label for="quantite">Quantité en stock :</label>
+            <input type="number" id="quantite" name="quantite" min="1" required>
+
+            <button type="submit">Ajouter le Livre</button>
+        </form>
+    </div>
+
+</body>
+</html>
