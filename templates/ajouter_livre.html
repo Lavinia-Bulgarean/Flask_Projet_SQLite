@@ -62,18 +62,11 @@
             <input type="text" id="titre" name="titre" required>
 
             <label for="auteur">Auteur :</label>
-            <select id="auteur" name="auteur" required>
-                {% for auteur in auteurs %}
-                    <option value="{{ auteur.id }}">{{ auteur.nom }} {{ auteur.prenom }}</option>
-                {% endfor %}
-            </select>
+            <input type="text" id="auteur" name="auteur" required>
 
             <label for="genre">Genre :</label>
-            <select id="genre" name="genre" required>
-                {% for genre in genres %}
-                    <option value="{{ genre.id }}">{{ genre.nom }}</option>
-                {% endfor %}
-            </select>
+            <input type="text" id="genre" name="genre" required>
+
 
             <label for="annee">Année de publication :</label>
             <input type="number" id="annee" name="annee" required>
