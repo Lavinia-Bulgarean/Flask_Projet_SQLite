@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livres Disponibles</title>
+</head>
+<body>
+
+<h1>Livres Disponibles</h1>
+
+<table border="1">
+    <tr>
+        <th>Titre</th>
+        <th>Auteur</th>
+        <th>Genre</th>
+        <th>Action</th>
+    </tr>
+    {% for livre in livres %}
+    <tr>
+        <td>{{ livre.titre }}</td>
+        <td>{{ livre.nom }} {{ livre.prenom }}</td>
+        <td>{{ livre.genre }}</td>
+        <td><a href="{{ url_for('emprunter_livre', id_livre=livre.id) }}">Emprunter</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{{ url_for('accueil') }}">Retour à l'accueil</a>
+
+</body>
+</html>
