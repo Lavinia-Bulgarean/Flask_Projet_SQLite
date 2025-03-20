@@ -113,33 +113,38 @@ def ajouter_livre():
     connection = sqlite3.connect('bibliotheque.db')
     cursor = connection.cursor()
 
-    if request.method == 'POST':
-        titre = request.form['titre']
-        id_auteur = request.form['id_auteur']
-        id_genre = request.form['id_genre']
-        annee_publication = request.form['annee_publication'] or None
-        ISBN = request.form['ISBN']
-
-        cursor.execute("""
-            INSERT INTO Livres (titre, id_auteur, id_genre, annee_publication, ISBN)
-            VALUES (?, ?, ?, ?, ?)
-        """, (titre, id_auteur, id_genre, annee_publication, ISBN))
-
-        connection.commit()
-        connection.close()
-        return redirect(url_for('lister_livres'))
-
+    # Récupérer la liste des auteurs et genres pour le formulaire
     cursor.execute("SELECT id, nom, prenom FROM Auteurs")
-    auteurs = [{"id": row[0], "nom": row[1], "prenom": row[2]} for row in cursor.fetchall()]
+    auteurs = cursor.fetchall()
 
     cursor.execute("SELECT id, nom FROM Genres")
-    genres = [{"id": row[0], "nom": row[1]} for row in cursor.fetchall()]
+    genres = cursor.fetchall()
+
+    if request.method == 'POST':
+        titre = request.form['titre']
+        id_auteur = request.form['auteur']
+        id_genre = request.form['genre']
+        annee = request.form['annee']
+        isbn = request.form['isbn']
+        quantite = request.form['quantite']
+
+        try:
+            cursor.execute(
+                "INSERT INTO Livres (titre, id_auteur, id_genre, annee_publication, ISBN) VALUES (?, ?, ?, ?, ?)",
+                (titre, id_auteur, id_genre, annee, isbn)
+            )
+            livre_id = cursor.lastrowid
+
+            cursor.execute("INSERT INTO Stock (id_livre, quantite) VALUES (?, ?)", (livre_id, quantite))
+
+            connection.commit()
+            return redirect(url_for('ajouter_livre'))
+
+        except sqlite3.IntegrityError:
+            return "Erreur: Ce livre existe déjà dans la base de données."
 
     connection.close()
-
-    return render_template('ajouter_livre.html', auteurs=auteurs, genres=genres)
-
-
+    return render_template("ajouter_livre.html", auteurs=auteurs, genres=genres)
 
 if __name__ == "__main__":
   app.run(debug=True)
