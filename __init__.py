@@ -107,6 +107,39 @@ def lister_livres():
     
     return render_template('lister_livres.html', livres=livres)
 
+#Route pour ajouter une livre
+@app.route('/ajouter_livre', methods=['GET', 'POST'])
+def ajouter_livre():
+    connection = sqlite3.connect('bibliotheque.db')
+    cursor = connection.cursor()
+
+    if request.method == 'POST':
+        titre = request.form['titre']
+        id_auteur = request.form['id_auteur']
+        id_genre = request.form['id_genre']
+        annee_publication = request.form['annee_publication'] or None
+        ISBN = request.form['ISBN']
+
+        cursor.execute("""
+            INSERT INTO Livres (titre, id_auteur, id_genre, annee_publication, ISBN)
+            VALUES (?, ?, ?, ?, ?)
+        """, (titre, id_auteur, id_genre, annee_publication, ISBN))
+
+        connection.commit()
+        connection.close()
+        return redirect(url_for('lister_livres'))
+
+    cursor.execute("SELECT id, nom, prenom FROM Auteurs")
+    auteurs = [{"id": row[0], "nom": row[1], "prenom": row[2]} for row in cursor.fetchall()]
+
+    cursor.execute("SELECT id, nom FROM Genres")
+    genres = [{"id": row[0], "nom": row[1]} for row in cursor.fetchall()]
+
+    connection.close()
+
+    return render_template('ajouter_livre.html', auteurs=auteurs, genres=genres)
+
+
 
 if __name__ == "__main__":
   app.run(debug=True)
