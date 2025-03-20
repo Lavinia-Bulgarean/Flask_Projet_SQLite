@@ -16,13 +16,13 @@
                 <th>ISBN</th>
                 <th>Actions</th>
             </tr>
-            {% for livre in livres %}
+            {% for row in data %}
             <tr>
-                <td>{{ livre.titre }}</td>
-                <td>{{ livre.nom }} {{ livre.prenom }}</td>
-                <td>{{ livre.genre }}</td>
-                <td>{{ livre.annee_publication }}</td>
-                <td>{{ livre.ISBN }}</td>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[4] }}</td>
             </tr>
             {% endfor %}
     </table>
