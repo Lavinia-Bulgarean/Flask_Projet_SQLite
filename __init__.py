@@ -254,15 +254,13 @@ def livres_disponibles():
     connection.close()
     
     return render_template('livres_disponibles.html', livres=livres)
-
-
-@app.route('/emprunter/<int:id_livre>')
+@app.route('/emprunter/<int:id_livre>', methods=['GET', 'POST'])
 def emprunter_livre(id_livre):
     if 'utilisateur_id' not in session:
         return redirect(url_for('connexion'))
 
     id_utilisateur = session['utilisateur_id']
-    date_retour_prevu = datetime.now() + timedelta(days=14)  # Retour prévu dans 14 jours
+    date_retour_prevu = datetime.now() + timedelta(days=14)
 
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -273,12 +271,14 @@ def emprunter_livre(id_livre):
             VALUES (?, ?, ?, 'emprunté')
         """, (id_utilisateur, id_livre, date_retour_prevu.strftime('%Y-%m-%d')))
         connection.commit()
+        flash("Livre emprunté avec succès !", "success")
     except sqlite3.Error as e:
-        print("Erreur lors de l'emprunt :", e)
+        flash(f"Erreur lors de l'emprunt : {e}", "danger")
     
     connection.close()
 
     return redirect(url_for('mes_emprunts'))
+
 
 @app.route('/mes_emprunts')
 def mes_emprunts():
