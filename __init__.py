@@ -162,6 +162,42 @@ def ajouter_livre():
         return redirect(url_for('lister_livres'))
 
     return render_template('ajouter_livre.html')
+
+# Route pour la page de connexion
+@app.route('/connexion', methods=['GET', 'POST'])
+def connexion():
+    if request.method == 'POST':
+        # Récupérer les informations du formulaire
+        nom = request.form['nom']
+        mot_de_passe = request.form['mot_de_passe']
+
+        # Connexion à la base de données
+        connection = get_db_connection()
+        cursor = connection.cursor()
+
+        # Rechercher l'utilisateur dans la base de données
+        cursor.execute("SELECT * FROM Utilisateurs WHERE nom = ? AND mot_de_passe = ?", (nom, mot_de_passe))
+        utilisateur = cursor.fetchone()
+        connection.close()
+
+        # Si l'utilisateur existe, l'authentifier
+        if utilisateur:
+            session['utilisateur_id'] = utilisateur['id']  # Sauvegarder l'id de l'utilisateur dans la session
+            session['utilisateur_nom'] = utilisateur['nom']  # Sauvegarder le nom de l'utilisateur
+            return redirect(url_for('accueil'))  # Rediriger vers la page d'accueil
+        else:
+            error = "Nom ou mot de passe incorrect"
+            return render_template('connexion.html', error=error)  # Si l'utilisateur n'est pas trouvé, afficher l'erreur
+
+    return render_template('connexion.html')
+
+
+# Vérifier si l'utilisateur est connecté
+@app.route('/deconnexion')
+def deconnexion():
+    session.clear()  # Supprimer les données de session
+    return redirect(url_for('accueil'))  # Rediriger vers l'accueil
+
         
 if __name__ == "__main__":
   app.run(debug=True)
