@@ -107,44 +107,38 @@ def lister_livres():
     
     return render_template('lister_livres.html', livres=livres)
 
-#Route pour ajouter une livre
+# Route pour afficher le formulaire d'ajout de livre
 @app.route('/ajouter_livre', methods=['GET', 'POST'])
 def ajouter_livre():
-    connection = sqlite3.connect('bibliotheque.db')
-    cursor = connection.cursor()
-
-    # Récupérer la liste des auteurs et genres pour le formulaire
-    cursor.execute("SELECT id, nom, prenom FROM Auteurs")
-    auteurs = cursor.fetchall()
-
-    cursor.execute("SELECT id, nom FROM Genres")
-    genres = cursor.fetchall()
-
     if request.method == 'POST':
+        # Récupération des données du formulaire
         titre = request.form['titre']
-        id_auteur = request.form['auteur']
-        id_genre = request.form['genre']
+        auteur = request.form['auteur']
+        genre = request.form['genre']
         annee = request.form['annee']
         isbn = request.form['isbn']
-        quantite = request.form['quantite']
 
-        try:
-            cursor.execute(
-                "INSERT INTO Livres (titre, id_auteur, id_genre, annee_publication, ISBN) VALUES (?, ?, ?, ?, ?)",
-                (titre, id_auteur, id_genre, annee, isbn)
-            )
-            livre_id = cursor.lastrowid
+        # Connexion à la base de données
+        connection = sqlite3.connect('bibliotheque.db')
+        cursor = connection.cursor()
 
-            cursor.execute("INSERT INTO Stock (id_livre, quantite) VALUES (?, ?)", (livre_id, quantite))
+        # Insérer le livre dans la base de données
+        cursor.execute("""
+            INSERT INTO Livres (titre, id_auteur, id_genre, annee_publication, ISBN)
+            VALUES (?, (SELECT id FROM Auteurs WHERE nom = ? AND prenom = ?),
+                    (SELECT id FROM Genres WHERE nom = ?), ?, ?)
+        """, (titre, auteur.split()[0], auteur.split()[1], genre, annee, isbn))
 
-            connection.commit()
-            return redirect(url_for('ajouter_livre'))
+        # Commit et fermer la connexion
+        connection.commit()
+        connection.close()
 
-        except sqlite3.IntegrityError:
-            return "Erreur: Ce livre existe déjà dans la base de données."
+        # Rediriger l'utilisateur vers la page des livres après l'ajout
+        return redirect(url_for('lister_livres'))
 
-    connection.close()
-    return render_template("ajouter_livre.html", auteurs=auteurs, genres=genres)
+    return render_template('ajouter_livre.html')
+
+
 
 if __name__ == "__main__":
   app.run(debug=True)
