@@ -87,12 +87,19 @@ def lister_livres():
     connection = sqlite3.connect('bibliotheque.db')
     cursor = connection.cursor()
 
-    # Récupérer tous les livres
-    cursor.execute("SELECT * FROM Livres")
-    livres = cursor.fetchall()
+    # Récupérer les livres avec leurs auteurs et genres
+    cursor.execute("""
+        SELECT Livres.titre, Auteurs.nom AS auteur_nom, Auteurs.prenom AS auteur_prenom,
+               Genres.nom AS genre, Livres.annee_publication, Livres.ISBN
+        FROM Livres
+        JOIN Auteurs ON Livres.id_auteur = Auteurs.id
+        JOIN Genres ON Livres.id_genre = Genres.id
+    """)
     
+    livres = cursor.fetchall()  # Récupérer toutes les lignes
     connection.close()
 
+    # Passer les livres récupérés au template
     return render_template('lister_livres.html', livres=livres)
 
 # Route pour afficher le formulaire d'ajout de livre
