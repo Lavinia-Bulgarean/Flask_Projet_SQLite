@@ -87,24 +87,12 @@ def lister_livres():
     connection = sqlite3.connect('bibliotheque.db')
     cursor = connection.cursor()
 
-    cursor.execute("""
-        SELECT Livres.titre, 
-               Auteurs.nom || ' ' || Auteurs.prenom AS auteur, 
-               COALESCE(Genres.nom, 'Inconnu') AS genre, 
-               Livres.annee_publication, 
-               Livres.ISBN 
-        FROM Livres
-        JOIN Auteurs ON Livres.id_auteur = Auteurs.id
-        LEFT JOIN Genres ON Livres.id_genre = Genres.id
-    """)
-    
-    livres = [
-        {"titre": row[0], "auteur": row[1], "genre": row[2], "annee_publication": row[3], "ISBN": row[4]}
-        for row in cursor.fetchall()
-    ]
+    # Récupérer tous les livres
+    cursor.execute("SELECT * FROM Livres")
+    livres = cursor.fetchall()
     
     connection.close()
-    
+
     return render_template('lister_livres.html', livres=livres)
 
 # Route pour afficher le formulaire d'ajout de livre
