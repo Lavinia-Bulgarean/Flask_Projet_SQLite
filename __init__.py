@@ -82,15 +82,30 @@ def accueil():
     return render_template('accueil.html')
 
 # Route pour récupérer les livres depuis la base
-@app.route('/Livres')
-def Nos_Livres():
-    conn = sqlite3.connect('bibliotheque.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM Livres;')
-    data = cursor.fetchall()
-    conn.close()
-    return render_template('lister_livres.html', Livres=Livres)
+@app.route('/lister_livres')
+def lister_livres():
+    connection = sqlite3.connect('bibliotheque.db')
+    cursor = connection.cursor()
 
+    cursor.execute("""
+        SELECT Livres.titre, 
+               Auteurs.nom || ' ' || Auteurs.prenom AS auteur, 
+               COALESCE(Genres.nom, 'Inconnu') AS genre, 
+               Livres.annee_publication, 
+               Livres.ISBN 
+        FROM Livres
+        JOIN Auteurs ON Livres.id_auteur = Auteurs.id
+        LEFT JOIN Genres ON Livres.id_genre = Genres.id
+    """)
+    
+    livres = [
+        {"titre": row[0], "auteur": row[1], "genre": row[2], "annee_publication": row[3], "ISBN": row[4]}
+        for row in cursor.fetchall()
+    ]
+    
+    connection.close()
+    
+    return render_template('lister_livres.html', livres=livres)
 
 
 if __name__ == "__main__":
