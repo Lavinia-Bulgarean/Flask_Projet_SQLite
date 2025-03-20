@@ -73,11 +73,11 @@
             </tr>
             {% for livre in livres %}
             <tr>
-                <td>{{ livre.titre }}</td>
-                <td>{{ livre.auteur }}</td>
-                <td>{{ livre.genre }}</td>
-                <td>{{ livre.annee_publication or 'Inconnue' }}</td>
-                <td>{{ livre.ISBN }}</td>
+                <td>{{ livre[0] }}</td>  <!-- Titre -->
+                <td>{{ livre[1] }} {{ livre[2] }}</td>  <!-- Auteur : nom et prénom -->
+                <td>{{ livre[3] }}</td>  <!-- Genre -->
+                <td>{{ livre[4] }}</td>  <!-- Année de publication -->
+                <td>{{ livre[5] }}</td>  <!-- ISBN -->
             </tr>
             {% endfor %}
         </table>
