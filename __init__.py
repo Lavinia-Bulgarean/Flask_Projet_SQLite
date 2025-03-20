@@ -166,30 +166,29 @@ def ajouter_livre():
 # Route pour la page de connexion
 @app.route('/connexion', methods=['GET', 'POST'])
 def connexion():
+    message = None
+    success = False
+
     if request.method == 'POST':
-        # Récupérer les informations du formulaire
         nom = request.form['nom']
         mot_de_passe = request.form['mot_de_passe']
 
-        # Connexion à la base de données
         connection = get_db_connection()
         cursor = connection.cursor()
-
-        # Rechercher l'utilisateur dans la base de données
         cursor.execute("SELECT * FROM Utilisateurs WHERE nom = ? AND mot_de_passe = ?", (nom, mot_de_passe))
         utilisateur = cursor.fetchone()
         connection.close()
 
-        # Si l'utilisateur existe, l'authentifier
         if utilisateur:
-            session['utilisateur_id'] = utilisateur['id']  # Sauvegarder l'id de l'utilisateur dans la session
-            session['utilisateur_nom'] = utilisateur['nom']  # Sauvegarder le nom de l'utilisateur
-            return redirect(url_for('accueil'))  # Rediriger vers la page d'accueil
+            session['utilisateur_id'] = utilisateur['id']
+            session['nom'] = utilisateur['nom']
+            success = True
+            message = "Authentification réussie ! Redirection..."
+            return redirect(url_for('emprunter_livre'))  # Redirection vers l'emprunt de livres
         else:
-            error = "Nom ou mot de passe incorrect"
-            return render_template('connexion.html', error=error)  # Si l'utilisateur n'est pas trouvé, afficher l'erreur
+            message = "Échec de connexion : Vérifiez votre nom et mot de passe."
 
-    return render_template('connexion.html')
+    return render_template('connexion.html', message=message, success=success)
 
 
 # Vérifier si l'utilisateur est connecté
