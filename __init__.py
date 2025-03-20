@@ -81,7 +81,7 @@ def enregistrer_client():
 def accueil():
     return render_template('accueil.html')
 
-@app.route('/Nos Livres/')
+@app.route('/Livres/')
 def Nos_Livres():
     conn = sqlite3.connect('bibliotheque.db')
     cursor = conn.cursor()
