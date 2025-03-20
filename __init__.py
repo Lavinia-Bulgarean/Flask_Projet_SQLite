@@ -232,7 +232,7 @@ def selectionner_livre():
     livres_disponibles = cursor.fetchall()
     connection.close()
 
-    return render_template('emprunter_livre.html', livres=livres_dispon
+    return render_template('emprunter_livre.html', livres=livres_disponibles)
 
 
 @app.route('/livres_disponibles')
