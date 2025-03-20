@@ -124,8 +124,15 @@ def ajouter_livre():
             # Vérifier si l'auteur existe déjà dans la base de données
             cursor.execute("SELECT id FROM Auteurs WHERE nom = ? AND prenom = ?", (auteur.split()[0], auteur.split()[1]))
             auteur_id = cursor.fetchone()
+            
             if not auteur_id:
-                return "Erreur : Auteur introuvable, vérifiez le nom et le prénom."
+                # Si l'auteur n'existe pas, on l'ajoute
+                cursor.execute("INSERT INTO Auteurs (nom, prenom) VALUES (?, ?)", (auteur.split()[0], auteur.split()[1]))
+                connection.commit()
+                
+                # Récupérer l'ID du nouvel auteur
+                cursor.execute("SELECT id FROM Auteurs WHERE nom = ? AND prenom = ?", (auteur.split()[0], auteur.split()[1]))
+                auteur_id = cursor.fetchone()
 
             # Vérifier si le genre existe dans la base de données
             cursor.execute("SELECT id FROM Genres WHERE nom = ?", (genre,))
@@ -155,10 +162,6 @@ def ajouter_livre():
         return redirect(url_for('lister_livres'))
 
     return render_template('ajouter_livre.html')
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
-
+        
 if __name__ == "__main__":
   app.run(debug=True)
