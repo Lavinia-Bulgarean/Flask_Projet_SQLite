@@ -81,7 +81,7 @@ def enregistrer_client():
 def accueil():
     return render_template('accueil.html')
 
-
+# Route pour récupérer les livres depuis la base
 @app.route('/Livres')
 def Nos_Livres():
     connection = sqlite3.connect('bibliotheque.db')
