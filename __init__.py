@@ -197,46 +197,43 @@ def deconnexion():
     session.clear()  # Supprimer les données de session
     return redirect(url_for('accueil'))  # Rediriger vers l'accueil
 
-@app.route('/emprunter_livre', methods=['GET', 'POST'])
-def emprunter_livre():
+@app.route('/selectionner_livre', methods=['GET', 'POST'])
+def selectionner_livre():
     # Vérifier si l'utilisateur est connecté
     if 'utilisateur_id' not in session:
         return redirect(url_for('connexion'))
 
-    # Connexion à la base de données
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    # Si la méthode est POST, cela signifie que l'utilisateur a cliqué sur le bouton "Emprunter"
     if request.method == 'POST':
         livre_id = request.form['livre_id']
         utilisateur_id = session['utilisateur_id']
 
-        # Ajouter l'emprunt dans la base de données (on prend la date actuelle et la date de retour prévue)
         cursor.execute("""
             INSERT INTO Emprunts (id_utilisateur, id_livre, date_retour_prevu, statut)
             VALUES (?, ?, DATE('now', '+30 days'), 'emprunté')
         """, (utilisateur_id, livre_id))
         
         connection.commit()
+        connection.close()
 
-        # Rediriger vers la page des livres empruntés
-        return redirect(url_for('emprunter_livre'))
+        return redirect(url_for('mes_emprunts'))
 
-    # Récupérer tous les livres disponibles
+    # Récupérer les livres disponibles
     cursor.execute("""
-        SELECT Livres.id, Livres.titre, Auteurs.nom AS auteur, Genres.nom AS genre
+        SELECT Livres.id, Livres.titre, Auteurs.nom, Genres.nom AS genre
         FROM Livres
         JOIN Auteurs ON Livres.id_auteur = Auteurs.id
         JOIN Genres ON Livres.id_genre = Genres.id
         LEFT JOIN Emprunts ON Livres.id = Emprunts.id_livre
-        WHERE Emprunts.id IS NULL  -- Seuls les livres non empruntés
+        WHERE Emprunts.id IS NULL
     """)
     livres_disponibles = cursor.fetchall()
-
     connection.close()
 
-    return render_template('emprunter_livre.html', livres=livres_disponibles)
+    return render_template('emprunter_livre.html', livres=livres_dispon
+
 
 @app.route('/livres_disponibles')
 def livres_disponibles():
