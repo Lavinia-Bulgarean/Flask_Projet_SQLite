@@ -24,6 +24,7 @@ CREATE TABLE Livres (
     id_genre INTEGER NOT NULL,
     annee_publication INTEGER,
     ISBN VARCHAR(20) UNIQUE NOT NULL,
+    disponible INTEGER DEFAULT 1,  -- ✅ Ajout correct de la colonne "disponible"
     FOREIGN KEY (id_auteur) REFERENCES Auteurs(id) ON DELETE CASCADE,
     FOREIGN KEY (id_genre) REFERENCES Genres(id) ON DELETE SET NULL
 );
