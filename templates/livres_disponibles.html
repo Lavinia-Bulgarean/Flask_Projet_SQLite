@@ -3,30 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Livres Disponibles</title>
+    <title>Liste des Livres</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+        .back-link:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
 
-<h1>Livres Disponibles</h1>
+    <header>
+        <h1>Liste des Livres</h1>
+    </header>
 
-<table border="1">
-    <tr>
-        <th>Titre</th>
-        <th>Auteur</th>
-        <th>Genre</th>
-        <th>Action</th>
-    </tr>
-    {% for livre in livres %}
-    <tr>
-        <td>{{ livre.titre }}</td>
-        <td>{{ livre.nom }} {{ livre.prenom }}</td>
-        <td>{{ livre.genre }}</td>
-        <td><a href="{{ url_for('emprunter_livre', id_livre=livre.id) }}">Emprunter</a></td>
-    </tr>
-    {% endfor %}
-</table>
+    <div class="container">
+        <table>
+            <tr>
+                <th>Titre</th>
+                <th>Auteur</th>
+                <th>Genre</th>
+                <th>Année</th>
+                <th>ISBN</th>
+            </tr>
+            {% for livre in livres %}
+            <tr>
+                <td>{{ livre[0] }}</td>  <!-- Titre -->
+                <td>{{ livre[1] }} {{ livre[2] }}</td>  <!-- Auteur : nom et prénom -->
+                <td>{{ livre[3] }}</td>  <!-- Genre -->
+                <td>{{ livre[4] }}</td>  <!-- Année de publication -->
+                <td>{{ livre[5] }}</td>  <!-- ISBN -->
+            </tr>
+            {% endfor %}
+        </table>
 
-<a href="{{ url_for('accueil') }}">Retour à l'accueil</a>
+        <a href="{{ url_for('accueil') }}" class="back-link">Retour à l'accueil</a>
+    </div>
 
 </body>
 </html>
