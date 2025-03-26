@@ -184,12 +184,17 @@ def connexion():
             session['nom'] = utilisateur['nom']
             success = True
             message = "Authentification réussie ! Redirection..."
-            return redirect(url_for('emprunter_livre'))  # Redirection vers l'emprunt de livres
+            # Vérifier si un id_livre était stocké avant la connexion
+            id_livre = session.pop('id_livre', None)
+            if id_livre:
+                return redirect(url_for('emprunter_livre', id_livre=id_livre))
+            else:
+                return redirect(url_for('selectionner_livre'))  # Redirection vers la sélection de livres
+        
         else:
             message = "Échec de connexion : Vérifiez votre nom et mot de passe."
 
     return render_template('connexion.html', message=message, success=success)
-
 
 # Vérifier si l'utilisateur est connecté
 @app.route('/deconnexion')
@@ -254,9 +259,11 @@ def livres_disponibles():
     connection.close()
     
     return render_template('livres_disponibles.html', livres=livres)
+
 @app.route('/emprunter/<int:id_livre>', methods=['GET', 'POST'])
 def emprunter_livre(id_livre):
     if 'utilisateur_id' not in session:
+        session['id_livre'] = id_livre  # Stocker l'id_livre temporairement
         return redirect(url_for('connexion'))
 
     id_utilisateur = session['utilisateur_id']
