@@ -202,43 +202,17 @@ def deconnexion():
     session.clear()  # Supprimer les données de session
     return redirect(url_for('accueil'))  # Rediriger vers l'accueil
 
-@app.route('/selectionner_livre', methods=['GET', 'POST'])
+@app.route('/selectionner_livre')
 def selectionner_livre():
-    # Vérifier si l'utilisateur est connecté
-    if 'utilisateur_id' not in session:
-        return redirect(url_for('connexion'))
-
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    if request.method == 'POST':
-        livre_id = request.form['livre_id']
-        utilisateur_id = session['utilisateur_id']
-
-        cursor.execute("""
-            INSERT INTO Emprunts (id_utilisateur, id_livre, date_retour_prevu, statut)
-            VALUES (?, ?, DATE('now', '+30 days'), 'emprunté')
-        """, (utilisateur_id, livre_id))
-        
-        connection.commit()
-        connection.close()
-
-        return redirect(url_for('mes_emprunts'))
-
-    # Récupérer les livres disponibles
-    cursor.execute("""
-        SELECT Livres.id, Livres.titre, Auteurs.nom, Genres.nom AS genre
-        FROM Livres
-        JOIN Auteurs ON Livres.id_auteur = Auteurs.id
-        JOIN Genres ON Livres.id_genre = Genres.id
-        LEFT JOIN Emprunts ON Livres.id = Emprunts.id_livre
-        WHERE Emprunts.id IS NULL
-    """)
-    livres_disponibles = cursor.fetchall()
+    cursor.execute("SELECT * FROM Livres WHERE disponible = 1")  # Ajustez selon votre table
+    livres = cursor.fetchall()
+    
     connection.close()
 
-    return render_template('emprunter_livre.html', livres=livres_disponibles)
-
+    return render_template('selectionner_livre.html', livres=livres)
 
 @app.route('/livres_disponibles')
 def livres_disponibles():
