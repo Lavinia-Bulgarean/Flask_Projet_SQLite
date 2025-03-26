@@ -217,7 +217,7 @@ def selectionner_livre():
     if request.method == 'POST':
         id_livre = request.form['id_livre']
         # Logique pour emprunter le livre ici
-        return redirect(url_for('emprunter_livre', id_livre=id_livre))
+        return redirect(url_for('emprunter_livre.html', id_livre=id_livre))
 
     # Passer les livres au template
     return render_template('selectionner_livre.html', livres=livres)
