@@ -27,7 +27,7 @@ cur.execute("INSERT INTO Stock (id_livre, quantite) VALUES (1, 3)")
 cur.execute("INSERT INTO Stock (id_livre, quantite) VALUES (2, 2)")
 
 cur.execute("INSERT INTO Emprunts (id_utilisateur, id_livre, date_retour_prevu, statut) VALUES (2, 1, '2024-04-01', 'emprunté')")
-
+cursor.execute("SELECT * FROM Livres WHERE statut = 'disponible'")
 connection.commit()
 connection.close()
     
