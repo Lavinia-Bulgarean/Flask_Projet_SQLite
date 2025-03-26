@@ -189,7 +189,7 @@ def connexion():
             if id_livre:
                 return redirect(url_for('emprunter_livre', id_livre=id_livre))
             else:
-                return redirect(url_for('livres_disponibles'))  # Redirection vers la sélection de livres
+                return render_template('livres_disponibles.html', livres=livres)
         
         else:
             message = "Échec de connexion : Vérifiez votre nom et mot de passe."
