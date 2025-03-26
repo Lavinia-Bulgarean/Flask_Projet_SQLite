@@ -1,4 +1,4 @@
-CREATE TABLE Utilisateurs (
+CREATE TABLE Utilisateurs ( 
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nom VARCHAR(100) NOT NULL,
     prenom VARCHAR(100) NOT NULL,
