@@ -301,6 +301,10 @@ def retourner_livre(id_livre):
     connection.close()
 
     return redirect(url_for('mes_emprunts'))
-        
+
+@app.route('/test_template')
+def test_template():
+    return render_template('selectionner_livre.html')
+
 if __name__ == "__main__":
   app.run(debug=True)
