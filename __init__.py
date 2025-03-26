@@ -189,7 +189,7 @@ def connexion():
             if id_livre:
                 return redirect(url_for('emprunter_livre', id_livre=id_livre))
             else:
-                return redirect(url_for('selectionner_livre'))  # Redirection vers la sélection de livres
+                return redirect(url_for('livres_disponibles'))  # Redirection vers la sélection de livres
         
         else:
             message = "Échec de connexion : Vérifiez votre nom et mot de passe."
@@ -202,25 +202,6 @@ def deconnexion():
     session.clear()  # Supprimer les données de session
     return redirect(url_for('accueil'))  # Rediriger vers l'accueil
 
-@app.route('/selectionner_livre', methods=['GET', 'POST'])
-def selectionner_livre():
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    
-    # Récupérer les livres disponibles
-    cursor.execute("SELECT Livres.id, Livres.titre, Auteurs.nom AS auteur_nom, Auteurs.prenom AS auteur_prenom "
-                   "FROM Livres "
-                   "JOIN Auteurs ON Livres.id_auteur = Auteurs.id "
-                   "WHERE Livres.disponible = 1")  # Filtrer les livres disponibles
-    livres = cursor.fetchall()
-
-    if request.method == 'POST':
-        id_livre = request.form['id_livre']
-        # Logique pour emprunter le livre ici
-        return redirect(url_for('emprunter_livre.html', id_livre=id_livre))
-
-    # Passer les livres au template
-    return render_template('selectionner_livre.html', livres=livres)
 
 @app.route('/livres_disponibles')
 def livres_disponibles():
