@@ -204,15 +204,20 @@ def deconnexion():
 
 @app.route('/selectionner_livre', methods=['GET', 'POST'])
 def selectionner_livre():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    
+    # Récupérer les livres disponibles
+    cursor.execute("SELECT Livres.id, Livres.titre, Auteurs.nom AS auteur_nom, Auteurs.prenom AS auteur_prenom "
+                   "FROM Livres "
+                   "JOIN Auteurs ON Livres.id_auteur = Auteurs.id "
+                   "WHERE Livres.disponible = 1")  # Filtrer les livres disponibles
+    livres = cursor.fetchall()
+
     if request.method == 'POST':
         id_livre = request.form['id_livre']
         # Logique pour emprunter le livre ici
         return redirect(url_for('emprunter_livre', id_livre=id_livre))
-
-    # Récupération des livres disponibles
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM Livres WHERE disponible = 1")  # ou une autre condition si nécessaire
-    livres = cursor.fetchall()
 
     # Passer les livres au template
     return render_template('selectionner_livre.html', livres=livres)
