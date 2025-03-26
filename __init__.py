@@ -162,8 +162,7 @@ def ajouter_livre():
         return redirect(url_for('lister_livres'))
 
     return render_template('ajouter_livre.html')
-
-# Route pour la page de connexion
+ 
 @app.route('/connexion', methods=['GET', 'POST'])
 def connexion():
     message = None
@@ -184,12 +183,9 @@ def connexion():
             session['nom'] = utilisateur['nom']
             success = True
             message = "Authentification réussie ! Redirection..."
-            # Vérifier si un id_livre était stocké avant la connexion
-            id_livre = session.pop('id_livre', None)
-            if id_livre:
-                return redirect(url_for('emprunter_livre', id_livre=id_livre))
-            else:
-                return render_template('livres_disponibles.html', livres=livres)
+
+            # Rediriger directement vers la page des livres disponibles après la connexion
+            return redirect(url_for('livres_disponibles'))  # Changer ici la redirection vers 'livres_disponibles'
         
         else:
             message = "Échec de connexion : Vérifiez votre nom et mot de passe."
