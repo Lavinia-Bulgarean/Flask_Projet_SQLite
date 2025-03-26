@@ -4,30 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sélectionner un Livre</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> <!-- Optionnel: pour un fichier CSS -->
 </head>
 <body>
-    <div class="container">
-        <h1>Sélectionner un Livre</h1>
-        
-        <p>Choisissez un livre à emprunter :</p>
+    <h1>Sélectionnez un livre à emprunter</h1>
 
-        <!-- Formulaire pour sélectionner un livre -->
-        <form action="{{ url_for('emprunter_livre') }}" method="POST">
-            <select name="id_livre" required>
-                <option value="">Sélectionnez un livre</option>
-                {% for livre in livres %}
-                    <option value="{{ livre.id }}">{{ livre.titre }} - {{ livre.auteur }} ({{ livre.annee_publication }})</option>
-                {% endfor %}
-            </select>
-            
-            <button type="submit">Emprunter</button>
-        </form>
+    <form method="POST">
+        <label for="id_livre">Choisissez un livre:</label>
+        <select name="id_livre" id="id_livre">
+            {% for livre in livres %}
+                <option value="{{ livre.id }}">{{ livre.titre }} par {{ livre.auteur_nom }} {{ livre.auteur_prenom }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Emprunter</button>
+    </form>
 
-        <!-- Lien de retour ou d'autres actions -->
-        <br>
-        <a href="{{ url_for('accueil') }}">Retour à l'accueil</a>
-    </div>
+    <a href="{{ url_for('accueil') }}">Retour à l'accueil</a>
 
 </body>
 </html>
