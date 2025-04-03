@@ -186,18 +186,10 @@ def connexion():
             success = True
             message = "Authentification réussie ! Redirection..."
 
-            # Vérifie si l'utilisateur voulait emprunter un livre avant la connexion
-            if 'id_livre' in session:
-                id_livre = session.pop('id_livre')  # Récupère et supprime la variable temporaire
-                return redirect(url_for('emprunter_livre', id_livre=id_livre))
-            
-            return redirect(url_for('emprunter_livre')) 
+           
+        return redirect(url_for('emprunter_livre')) 
          
-        else:
-            message = "Échec de connexion : Vérifiez votre nom et mot de passe."
-
-    return render_template('connexion.html', message=message, success=success)
-
+       
 # Vérifier si l'utilisateur est connecté
 @app.route('/deconnexion')
 def deconnexion():
