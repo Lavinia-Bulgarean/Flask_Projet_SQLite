@@ -220,8 +220,27 @@ def livres_disponibles():
  
 @app.route('/emprunter_livre/<int:id_livre>', methods=['POST'])
 def emprunter_livre(id_livre):
-    # Ta logique pour emprunter un livre
-    return f"Livre {id_livre} emprunté"
+    if 'utilisateur_id' not in session:
+        return redirect(url_for('connexion'))  # Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+    
+    # Vérifier si le livre est déjà emprunté ou disponible
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM Livres WHERE id = ?", (id_livre,))
+    livre = cursor.fetchone()
+
+    if livre:
+        # Insérer un nouvel emprunt dans la base de données
+        cursor.execute("INSERT INTO Emprunts (id_livre, id_utilisateur, date_emprunt, statut) VALUES (?, ?, NOW(), 'emprunté')", 
+                       (id_livre, session['utilisateur_id']))
+        connection.commit()
+        message = "Livre emprunté avec succès !"
+    else:
+        message = "Le livre n'existe pas."
+
+    connection.close()
+    return redirect(url_for('mes_emprunts'))  # Rediriger vers la page des emprunts de l'utilisateur 
+
 
 @app.route('/mes_emprunts')
 def mes_emprunts():
