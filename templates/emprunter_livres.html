@@ -83,7 +83,7 @@
                 <td>{{ livre.auteur }}</td>
                 <td>{{ livre.genre }}</td>
                 <td>
-                    <form action="{{ url_for('emprunter_livre', id_livre=livre.id) }}" method="POST">
+                    <form action="{{ url_for('emprunters_livres', id_livre=livre.id) }}" method="POST">
                         <button type="submit">Emprunter</button>
                     </form>
                 </td>
