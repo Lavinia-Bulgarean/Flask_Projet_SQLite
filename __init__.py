@@ -4,6 +4,8 @@ from flask import json
 from urllib.request import urlopen
 from werkzeug.utils import secure_filename
 import sqlite3 
+from datetime import datetime, timedelta
+from flask import flash  # Pour afficher des messages
  
 app = Flask(__name__)                                                                                                                  
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # Clé secrète pour les sessions
@@ -184,9 +186,13 @@ def connexion():
             success = True
             message = "Authentification réussie ! Redirection..."
 
-            # Rediriger directement vers la page des livres disponibles après la connexion
-            return redirect(url_for('livres_disponibles'))  # Changer ici la redirection vers 'livres_disponibles'
-        
+            # Vérifie si l'utilisateur voulait emprunter un livre avant la connexion
+            if 'id_livre' in session:
+                id_livre = session.pop('id_livre')  # Récupère et supprime la variable temporaire
+                return redirect(url_for('emprunter_livre', id_livre=id_livre))
+
+            return redirect(url_for('livres_disponibles'))  # Redirection par défaut
+
         else:
             message = "Échec de connexion : Vérifiez votre nom et mot de passe."
 
@@ -222,22 +228,35 @@ def livres_disponibles():
 @app.route('/emprunter/<int:id_livre>', methods=['GET', 'POST'])
 def emprunter_livre(id_livre):
     if 'utilisateur_id' not in session:
-        session['id_livre'] = id_livre  # Stocker l'id_livre temporairement
-        return redirect(url_for('connexion'))
+        # Stocke temporairement l'ID du livre pour redirection après connexion
+        session['id_livre'] = id_livre  
+        flash("Veuillez vous connecter pour emprunter un livre.", "warning")
+        return redirect(url_for('connexion'))  # Redirige vers la connexion
 
     id_utilisateur = session['utilisateur_id']
-    date_retour_prevu = datetime.now() + timedelta(days=14)
+    date_retour_prevu = datetime.now() + timedelta(days=14)  # Prêt pour 14 jours
 
     connection = get_db_connection()
     cursor = connection.cursor()
 
     try:
+        # Vérifier si le livre est déjà emprunté
         cursor.execute("""
-            INSERT INTO Emprunts (id_utilisateur, id_livre, date_retour_prevu, statut)
-            VALUES (?, ?, ?, 'emprunté')
-        """, (id_utilisateur, id_livre, date_retour_prevu.strftime('%Y-%m-%d')))
-        connection.commit()
-        flash("Livre emprunté avec succès !", "success")
+            SELECT id FROM Emprunts WHERE id_livre = ? AND statut = 'emprunté'
+        """, (id_livre,))
+        emprunt_existant = cursor.fetchone()
+
+        if emprunt_existant:
+            flash("Ce livre est déjà emprunté.", "danger")
+        else:
+            # Ajouter l'emprunt à la base de données
+            cursor.execute("""
+                INSERT INTO Emprunts (id_utilisateur, id_livre, date_retour_prevu, statut)
+                VALUES (?, ?, ?, 'emprunté')
+            """, (id_utilisateur, id_livre, date_retour_prevu.strftime('%Y-%m-%d')))
+            connection.commit()
+            flash("Livre emprunté avec succès !", "success")
+
     except sqlite3.Error as e:
         flash(f"Erreur lors de l'emprunt : {e}", "danger")
     
@@ -245,22 +264,25 @@ def emprunter_livre(id_livre):
 
     return redirect(url_for('mes_emprunts'))
 
-
 @app.route('/mes_emprunts')
 def mes_emprunts():
     if 'utilisateur_id' not in session:
+        flash("Veuillez vous connecter pour voir vos emprunts.", "warning")
         return redirect(url_for('connexion'))
 
     id_utilisateur = session['utilisateur_id']
 
     connection = get_db_connection()
     cursor = connection.cursor()
+    
     cursor.execute("""
-        SELECT Livres.titre, Auteurs.nom, Auteurs.prenom, Emprunts.date_emprunt, Emprunts.date_retour_prevu, Emprunts.statut
+        SELECT Livres.titre, Auteurs.nom, Auteurs.prenom, 
+               Emprunts.date_emprunt, Emprunts.date_retour_prevu, Emprunts.statut
         FROM Emprunts
         JOIN Livres ON Emprunts.id_livre = Livres.id
         JOIN Auteurs ON Livres.id_auteur = Auteurs.id
-        WHERE Emprunts.id_utilisateur = ? AND Emprunts.statut = 'emprunté'
+        WHERE Emprunts.id_utilisateur = ? 
+        ORDER BY Emprunts.date_emprunt DESC
     """, (id_utilisateur,))
     
     emprunts = cursor.fetchall()
