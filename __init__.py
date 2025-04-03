@@ -244,22 +244,20 @@ def emprunter_livres():
 @app.route('/mes_emprunts')
 def mes_emprunts():
     if 'utilisateur_id' not in session:
-        flash("Veuillez vous connecter pour voir vos emprunts.", "warning")
-        return redirect(url_for('connexion'))
+        return redirect(url_for('connexion'))  # Si l'utilisateur n'est pas connecté, on le redirige vers la page de connexion
 
     id_utilisateur = session['utilisateur_id']
 
     connection = get_db_connection()
     cursor = connection.cursor()
-    
+
+    # Récupérer les livres empruntés par l'utilisateur
     cursor.execute("""
-        SELECT Livres.titre, Auteurs.nom, Auteurs.prenom, 
-               Emprunts.date_emprunt, Emprunts.date_retour_prevu, Emprunts.statut
+        SELECT Livres.titre, Auteurs.nom, Auteurs.prenom, Emprunts.date_emprunt, Emprunts.date_retour_prevu, Emprunts.statut
         FROM Emprunts
         JOIN Livres ON Emprunts.id_livre = Livres.id
         JOIN Auteurs ON Livres.id_auteur = Auteurs.id
-        WHERE Emprunts.id_utilisateur = ? 
-        ORDER BY Emprunts.date_emprunt DESC
+        WHERE Emprunts.id_utilisateur = ? AND Emprunts.statut = 'emprunté'
     """, (id_utilisateur,))
     
     emprunts = cursor.fetchall()
@@ -267,24 +265,6 @@ def mes_emprunts():
     
     return render_template('mes_emprunts.html', emprunts=emprunts)
 
-@app.route('/retourner/<int:id_livre>')
-def retourner_livre(id_livre):
-    if 'utilisateur_id' not in session:
-        return redirect(url_for('connexion'))
-
-    id_utilisateur = session['utilisateur_id']
-
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute("""
-        UPDATE Emprunts
-        SET statut = 'retourné', date_retour_effectif = CURRENT_DATE
-        WHERE id_utilisateur = ? AND id_livre = ? AND statut = 'emprunté'
-    """, (id_utilisateur, id_livre))
-    connection.commit()
-    connection.close()
-
-    return redirect(url_for('mes_emprunts'))
 
 
 if __name__ == "__main__":
