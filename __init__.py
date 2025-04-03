@@ -218,8 +218,8 @@ def livres_disponibles():
     
     return render_template('livres_disponibles.html', livres=livres)
  
-@app.route('/emprunter_livre/<int:id_livre>', methods=['POST'])
-def emprunter_livre(id_livre):
+@app.route('/emprunter_livres/<int:id_livre>', methods=['POST'])
+def emprunter_livres(id_livre):
     if 'utilisateur_id' not in session:
         return redirect(url_for('connexion'))  # Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
     
