@@ -217,29 +217,11 @@ def livres_disponibles():
     connection.close()
     
     return render_template('livres_disponibles.html', livres=livres)
-
-@app.route('/emprunter_livres')
-def emprunter_livres():
-    if 'utilisateur_id' not in session:
-        return redirect(url_for('connexion'))
-
-    connection = get_db_connection()
-    cursor = connection.cursor()
-
-    cursor.execute("""
-        SELECT Livres.id, Livres.titre, Auteurs.nom, Auteurs.prenom, Genres.nom AS genre
-        FROM Livres
-        JOIN Auteurs ON Livres.id_auteur = Auteurs.id
-        JOIN Genres ON Livres.id_genre = Genres.id
-        WHERE Livres.id NOT IN (
-            SELECT id_livre FROM Emprunts WHERE statut = 'emprunté'
-        )
-    """)
-    
-    livres = cursor.fetchall()
-    connection.close()
-    
-    return render_template('emprunter_livres.html', livres=livres)
+ 
+@app.route('/emprunter_livre/<int:id_livre>', methods=['POST'])
+def emprunter_livre(id_livre):
+    # Ta logique pour emprunter un livre
+    return f"Livre {id_livre} emprunté"
 
 @app.route('/mes_emprunts')
 def mes_emprunts():
