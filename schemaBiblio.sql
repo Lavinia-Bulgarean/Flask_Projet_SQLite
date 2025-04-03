@@ -6,7 +6,7 @@ CREATE TABLE Utilisateurs (
     role VARCHAR(20) CHECK (role IN ('admin', 'utilisateur')) NOT NULL
 );
 
-CREATE TABLE Genres (
+CREATE TABLE Genres ( 
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nom VARCHAR(100) UNIQUE NOT NULL
 );
