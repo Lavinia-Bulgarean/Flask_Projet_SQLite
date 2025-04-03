@@ -1,0 +1,133 @@
+a<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Livre</title>
+
+    <style>
+        /* Style général du corps de la page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Conteneur principal */
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Titre principal */
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        /* Formulaire */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Label */
+        label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Champs de saisie */
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.3s ease;
+        }
+
+        /* Champs de saisie : focus */
+        input[type="text"]:focus, input[type="number"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        /* Bouton "Ajouter le Livre" */
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 12px;
+            font-size: 18px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Bouton : hover */
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Lien "Retour à l'accueil" */
+        .back-link {
+            text-align: center;
+            display: block;
+            margin-top: 20px;
+            font-size: 16px;
+            color: #4CAF50;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        /* Lien : hover */
+        .back-link:hover {
+            color: #45a049;
+        }
+
+        /* Ajout de l'espacement */
+        .form-container {
+            margin-top: 30px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Ajouter un Livre</h1>
+
+    <!-- Formulaire d'ajout de livre -->
+    <form action="{{ url_for('ajouter_livre') }}" method="POST">
+        <div class="form-container">
+            <label for="titre">Titre :</label>
+            <input type="text" id="titre" name="titre" required><br><br>
+
+            <label for="auteur">Auteur :</label>
+            <input type="text" id="auteur" name="auteur" required><br><br>
+
+            <label for="genre">Genre :</label>
+            <input type="text" id="genre" name="genre" required><br><br>
+
+            <label for="annee">Année de Publication :</label>
+            <input type="number" id="annee" name="annee" required><br><br>
+
+            <label for="isbn">ISBN :</label>
+            <input type="text" id="isbn" name="isbn" required><br><br>
+
+            <button type="submit">Ajouter le Livre</button>
+        </div>
+    </form>
+
+    <a href="{{ url_for('accueil') }}" class="back-link">Retour à l'accueil</a>
+</div>
+
+</body>
+</html>
