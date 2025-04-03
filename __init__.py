@@ -186,9 +186,10 @@ def connexion():
             success = True
             message = "Authentification réussie ! Redirection..."
 
-           
-        return redirect(url_for('emprunter_livre')) 
-         
+            # ✅ Rediriger directement vers la liste des livres à emprunter
+            return redirect(url_for('emprunter_livres'))  # Assurez-vous que cette route existe
+
+    return render_template('connexion.html', message=message, success=success)
        
 # Vérifier si l'utilisateur est connecté
 @app.route('/deconnexion')
@@ -217,44 +218,28 @@ def livres_disponibles():
     
     return render_template('livres_disponibles.html', livres=livres)
 
-@app.route('/emprunter/<int:id_livre>', methods=['GET', 'POST'])
-def emprunter_livre(id_livre):
+@app.route('/emprunter_livres')
+def emprunter_livres():
     if 'utilisateur_id' not in session:
-        # Stocke temporairement l'ID du livre pour redirection après connexion
-        session['id_livre'] = id_livre  
-        flash("Veuillez vous connecter pour emprunter un livre.", "warning")
-        return redirect(url_for('connexion'))  # Redirige vers la connexion
-
-    id_utilisateur = session['utilisateur_id']
-    date_retour_prevu = datetime.now() + timedelta(days=14)  # Prêt pour 14 jours
+        return redirect(url_for('connexion'))
 
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    try:
-        # Vérifier si le livre est déjà emprunté
-        cursor.execute("""
-            SELECT id FROM Emprunts WHERE id_livre = ? AND statut = 'emprunté'
-        """, (id_livre,))
-        emprunt_existant = cursor.fetchone()
-
-        if emprunt_existant:
-            flash("Ce livre est déjà emprunté.", "danger")
-        else:
-            # Ajouter l'emprunt à la base de données
-            cursor.execute("""
-                INSERT INTO Emprunts (id_utilisateur, id_livre, date_retour_prevu, statut)
-                VALUES (?, ?, ?, 'emprunté')
-            """, (id_utilisateur, id_livre, date_retour_prevu.strftime('%Y-%m-%d')))
-            connection.commit()
-            flash("Livre emprunté avec succès !", "success")
-
-    except sqlite3.Error as e:
-        flash(f"Erreur lors de l'emprunt : {e}", "danger")
+    cursor.execute("""
+        SELECT Livres.id, Livres.titre, Auteurs.nom, Auteurs.prenom, Genres.nom AS genre
+        FROM Livres
+        JOIN Auteurs ON Livres.id_auteur = Auteurs.id
+        JOIN Genres ON Livres.id_genre = Genres.id
+        WHERE Livres.id NOT IN (
+            SELECT id_livre FROM Emprunts WHERE statut = 'emprunté'
+        )
+    """)
     
+    livres = cursor.fetchall()
     connection.close()
-
-    return redirect(url_for('mes_emprunts'))
+    
+    return render_template('emprunter_livres.html', livres=livres)
 
 @app.route('/mes_emprunts')
 def mes_emprunts():
