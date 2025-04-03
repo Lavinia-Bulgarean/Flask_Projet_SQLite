@@ -191,8 +191,6 @@ def connexion():
                 id_livre = session.pop('id_livre')  # Récupère et supprime la variable temporaire
                 return redirect(url_for('emprunter_livre', id_livre=id_livre))
 
-            return redirect(url_for('livres_disponibles'))  # Redirection par défaut
-
         else:
             message = "Échec de connexion : Vérifiez votre nom et mot de passe."
 
